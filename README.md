@@ -51,9 +51,28 @@ openssl genpkey -algorithm gost2012_256 -pkeyopt paramset:A -out gost.test.org.k
 ```
 2. Создаем запрос в УЦ (CSR).
 ```bash
-openssl req -new  -md_gost12_256 -key gost.test.org.key -out gost.test.org.csr -subj "/C=RU/L=SPb/O=Test_org/CN=gost.test.org" -addext "subjectAltName=DNS:gost.test.org,DNS:www.gost.test.org"
+openssl req -new  -md_gost12_256 -key gost.test.org.key -out gost.test.org.csr \
+-subj "/C=RU/L=SPb/O=Test_org/CN=gost.test.org" \
+-addext "subjectAltName=DNS:gost.test.org,DNS:www.gost.test.org"
 ```
 3. Выводим содержимое сформированного файла-запроса:
 ```bash
 openssl req -text -noout -verify -in gost.test.org.csr
+```
+### Выпуск собственным УЦ:
+1. Генерируем закрытый ключ и запрос на выпуск сертификата (см. раздел "Выпуск сертфиката сторонним УЦ", п. 1-2 ).
+2. Генерируем закрытый ключ УЦ:
+```bash
+openssl genpkey -algorithm gost2012_256 -pkeyopt paramset:A -out ca.key
+```
+3. Генерируем сертификат УЦ:
+```bash
+openssl req -new -x509 -md_gost12_256 -days 365 -key ca.key -out ca.cer \
+-subj "/C=RU/ST=Russia/L=SPb/O=Test_org/OU=Test_OU/CN=Test_CA"
+```
+4. Создаем и подписываем запрашиваемый сертификат:
+```bash
+openssl x509 -req \
+-extfile <(printf "subjectAltName=DNS:gost.test.org,DNS:www.gost.test.org \n crlDistributionPoints=URI:http://gost.test.org/ca.crl") \
+-days 365 -in gost.test.org.csr -CA ca.cer -CAkey ca.key -CAcreateserial -out gost.test.org.cer
 ```
