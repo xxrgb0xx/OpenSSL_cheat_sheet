@@ -1,10 +1,10 @@
 # OpenSSL_cheat_sheet | Шпаргалка OpenSSL
-## Просмотр данных сертификата (формат PEM):
+## Просмотр данных сертификата (формат PEM)
 ```bash
 openssl x509 -text -noout -in ИМЯ_СЕРТИФИКАТА
 ```
 *alias certinfo='openssl x509 -text -noout -in'*
-## Скачать сертификат с сервера:
+## Скачать сертификат с сервера
 ```bash
 openssl s_client -connect АДРЕС_СЕРВЕРА:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > ИМЯ_ФАЙЛА
 ```
@@ -13,7 +13,7 @@ openssl s_client -connect АДРЕС_СЕРВЕРА:443 -showcerts </dev/null 2>
 ```bash
 openssl s_client -connect ИМЯ_СЕРВЕРА:443
 ```
-## Самозаверенный сертификат одной командой:
+## Самозаверенный сертификат одной командой
 ```bash
 openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
   -keyout ИМЯ_ЗАКРЫТОГО_КЛЮЧА.key \
@@ -28,7 +28,7 @@ openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
   echo 'subjectAltName=DNS:example.localnet.ru')
 ```
 *Можно сгенерировать wildcard сертификат указав в CommonName и subjectAltName адрес вида **\*.domain.org**.*
-## Пакет ca-certificates:
+## Пакет ca-certificates
 Добавить сертификат в доверенные ЦС:
 1. Файл сертификата обязательно должен заканчиваться на .cer.
 2. Копируем файл в "/usr/local/share/ca-certificates/".
@@ -43,8 +43,8 @@ Updating certificates in /etc/ssl/certs...
 Running hooks in /etc/ca-certificates/update.d...
 done.
 ```
-## Работа с ГОСТ сертификатами:
-### Выпуск сертфиката сторонним УЦ:
+## Работа с ГОСТ сертификатами
+### Выпуск сертфиката сторонним УЦ
 1.  Генерируем закрытый ключ:
 ```bash
 openssl genpkey -algorithm gost2012_256 -pkeyopt paramset:A -out gost.test.org.key
@@ -59,7 +59,7 @@ openssl req -new  -md_gost12_256 -key gost.test.org.key -out gost.test.org.csr \
 ```bash
 openssl req -text -noout -verify -in gost.test.org.csr
 ```
-### Выпуск собственным УЦ:
+### Выпуск собственным УЦ
 1. Генерируем закрытый ключ и запрос на выпуск сертификата (см. раздел "Выпуск сертфиката сторонним УЦ", п. 1-2 ).
 2. Генерируем закрытый ключ УЦ:
 ```bash
@@ -76,7 +76,7 @@ openssl x509 -req \
 -extfile <(printf "subjectAltName=DNS:gost.test.org,DNS:www.gost.test.org \n crlDistributionPoints=URI:http://gost.test.org/ca.crl") \
 -days 365 -in gost.test.org.csr -CA ca.cer -CAkey ca.key -CAcreateserial -out gost.test.org.cer
 ```
-## Конвертация PKCS#12 / PFX (сертификат + приватный ключ) в PEM.
+## Конвертация PKCS#12 / PFX (сертификат + приватный ключ) в PEM
 Приватный ключ:
 ```bash
 openssl pkcs12 -in ИМЯ_СЕРТИФИКАТА.pfx -out key.pem -nodes
@@ -84,4 +84,13 @@ openssl pkcs12 -in ИМЯ_СЕРТИФИКАТА.pfx -out key.pem -nodes
 Сертификат:
 ```bash
 openssl pkcs12 -in ИМЯ_СЕРТИФИКАТА.pfx -clcerts -nokeys -out cert.pem
+```
+## Зашифровать / расшифровать приватный ключ
+Зашифровать:
+```bash
+openssl rsa -aes256 -in ПРИВАТНЫЙ_КЛЮЧ.pem -out ЗАШИФРОВАННЫЙ_ПРИВАТНЫЙ_КЛЮЧ.pem
+```
+Расшифровать:
+```bash
+openssl rsa -in ЗАШИФРОВАННЫЙ_ПРИВАТНЫЙ_КЛЮЧ.pem -out ПРИВАТНЫЙ_КЛЮЧ.pem
 ```
