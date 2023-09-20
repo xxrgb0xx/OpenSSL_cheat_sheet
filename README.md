@@ -13,6 +13,21 @@ openssl s_client -connect АДРЕС_СЕРВЕРА:443 -showcerts </dev/null 2>
 ```bash
 openssl s_client -connect ИМЯ_СЕРВЕРА:443
 ```
+## Проверка соотвествия сертификата и приватного ключа
+Сертификат:
+```bash
+openssl x509 -noout -modulus -in $ИМЯ_СЕРТИФИКАТА | openssl md5 
+```
+Ключ:
+```bash
+openssl rsa -noout -modulus -in $ИМЯ_ПРИВАТНОГО_КЛЮЧА | openssl md5 
+```
+Запрос CSR:
+```bash
+openssl req -noout -modulus -in $ИМЯ_ЗАПРОСА_CSR | openssl md5
+```
+*Хэши подулей должны совпадать.*
+
 ## Самозаверенный сертификат одной командой
 ```bash
 openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
