@@ -26,7 +26,7 @@ openssl rsa -noout -modulus -in $ИМЯ_ПРИВАТНОГО_КЛЮЧА | openss
 ```bash
 openssl req -noout -modulus -in $ИМЯ_ЗАПРОСА_CSR | openssl md5
 ```
-*Хэши подулей должны совпадать.*
+*Хэши модулей должны совпадать.*
 
 ## Самозаверенный сертификат одной командой
 ```bash
