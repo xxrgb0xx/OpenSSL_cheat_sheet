@@ -100,6 +100,12 @@ openssl pkcs12 -in ИМЯ_СЕРТИФИКАТА.pfx -out key.pem -nodes
 ```bash
 openssl pkcs12 -in ИМЯ_СЕРТИФИКАТА.pfx -clcerts -nokeys -out cert.pem
 ```
+
+## Конвертация PEM в PKCS#12 / PFX (сертификат + приватный ключ) 
+```bash
+openssl pkcs12 -inkey ПРИВАТНЫЙ_КЛЮЧ.pem -in СЕРТИФИКАТ.pem -export -out СЕРТИФИКАТ_С_ПРИВАТНЫМ_КЛЮЧОМ.pfx
+```
+
 ## Зашифровать / расшифровать приватный ключ
 Зашифровать:
 ```bash
