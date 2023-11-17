@@ -56,7 +56,7 @@ openssl req -nodes -x509 -sha256 -key CA_key.pem \
   -days 356 \
   -subj "/C=RU/ST=SPb/L=SPb/O=CORP_NAME/OU=CORP_UNIT/CN=ROOT_CA"
 ```
-3.Генерируем приватный ключ для выпускаемого сертификата:
+3. Генерируем приватный ключ для выпускаемого сертификата:
 ```bash
 openssl genrsa -out localnet.example.ru_key.pem 2048
 ```
