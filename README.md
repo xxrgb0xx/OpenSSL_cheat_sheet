@@ -44,7 +44,7 @@ openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
 ```
 *Можно сгенерировать wildcard сертификат указав в CommonName и subjectAltName адрес вида **\*.domain.org**.*
 
-## Пакет ca-certificates
+## Создание собственного ЦС и выпуск сертификата
 1. Генерируем приватный ключ для сертификата CA:
 ```bash
 openssl genrsa -out CA_key.pem 2048
@@ -56,13 +56,22 @@ openssl req -nodes -x509 -sha256 -key CA_key.pem \
   -days 356 \
   -subj "/C=RU/ST=SPb/L=SPb/O=CORP_NAME/OU=CORP_UNIT/CN=ROOT_CA"
 ```
-3. Создаем запрос в CA на выпуск сертификата (CSR):
+3.Генерируем приватный ключ для выпускаемого сертификата:
 ```bash
-openssl req -new -key CA_key.pem -out localnet.example.ru.csr \
+openssl genrsa -out localnet.example.ru_key.pem 2048
+```
+4. Создаем запрос в CA на выпуск сертификата (CSR):
+```bash
+openssl req -new -key localnet.example.ru_key.pem -out localnet.example.ru.csr \
 -subj "/C=RU/L=SPb/O=EXAMPLE_ORG/CN=localnet.example.ru" \
 -addext "subjectAltName=DNS:localnet.example.ru,DNS:www.localnet.example.ru"
 ```
-4. !!!
+5. Создаем и подписываем запрашиваемый сертификат:
+```bash
+openssl x509 -req \
+-extfile <(printf "subjectAltName=DNS:localnet.example.ru,DNS:localnet.example.ru \n crlDistributionPoints=URI:http://localnet.example.ru/ca.crl") \
+-days 365 -in localnet.example.ru.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out localnet.example.ru_crt.pem
+```
 
 ## Пакет ca-certificates
 Добавить сертификат в доверенные ЦС:
