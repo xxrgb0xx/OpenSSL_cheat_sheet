@@ -69,7 +69,7 @@ openssl req -new -key localnet.example.ru_key.pem -out localnet.example.ru.csr \
 5. Создаем и подписываем запрашиваемый сертификат:
 ```bash
 openssl x509 -req \
--extfile <(printf "subjectAltName=DNS:localnet.example.ru,DNS:localnet.example.ru \n crlDistributionPoints=URI:http://localnet.example.ru/ca.crl") \
+-extfile <(printf "subjectAltName=DNS:localnet.example.ru,DNS:www.localnet.example.ru \n crlDistributionPoints=URI:http://localnet.example.ru/ca.crl") \
 -days 365 -in localnet.example.ru.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out localnet.example.ru_crt.pem
 ```
 
