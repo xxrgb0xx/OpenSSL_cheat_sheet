@@ -43,6 +43,27 @@ openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
   echo 'subjectAltName=DNS:example.localnet.ru')
 ```
 *Можно сгенерировать wildcard сертификат указав в CommonName и subjectAltName адрес вида **\*.domain.org**.*
+
+## Пакет ca-certificates
+1. Генерируем приватный ключ для сертификата CA:
+```bash
+openssl genrsa -out CA_key.pem 2048
+```
+2. Генерируем сертификат CA:
+```bash
+openssl req -nodes -x509 -sha256 -key CA_key.pem \
+  -out CA_crt.pem \
+  -days 356 \
+  -subj "/C=RU/ST=SPb/L=SPb/O=CORP_NAME/OU=CORP_UNIT/CN=ROOT_CA"
+```
+3. Создаем запрос в CA на выпуск сертификата (CSR):
+```bash
+openssl req -new -key CA_key.pem -out localnet.example.ru.csr \
+-subj "/C=RU/L=SPb/O=EXAMPLE_ORG/CN=localnet.example.ru" \
+-addext "subjectAltName=DNS:localnet.example.ru,DNS:www.localnet.example.ru"
+```
+4. !!!
+
 ## Пакет ca-certificates
 Добавить сертификат в доверенные ЦС:
 1. Файл сертификата обязательно должен заканчиваться на .cer.
