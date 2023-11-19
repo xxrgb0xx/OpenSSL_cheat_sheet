@@ -121,6 +121,17 @@ openssl x509 -req \
 -extfile <(printf "subjectAltName=DNS:gost.test.org,DNS:www.gost.test.org \n crlDistributionPoints=URI:http://gost.test.org/ca.crl") \
 -days 365 -in gost.test.org.csr -CA ca.cer -CAkey ca.key -CAcreateserial -out gost.test.org.cer
 ```
+
+## Конвертация DER в PEM
+```bash
+openssl x509 -inform der -in ИМЯ_СЕРТИФИКАТА.der -out ИМЯ_СЕРТИФИКАТА.pem
+```
+
+## Конвертация PEM в DER
+```bash
+openssl x509 -inform pem -in ИМЯ_СЕРТИФИКАТА.pem -out ИМЯ_СЕРТИФИКАТА.der
+```
+
 ## Конвертация PKCS#12 / PFX (сертификат + приватный ключ) в PEM
 Приватный ключ:
 ```bash
