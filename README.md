@@ -123,13 +123,22 @@ openssl x509 -req \
 ```
 
 ## Конвертация DER в PEM
+Сертификат:
 ```bash
 openssl x509 -inform der -in ИМЯ_СЕРТИФИКАТА.der -out ИМЯ_СЕРТИФИКАТА.pem
 ```
-
+Ключ:
+```bash
+openssl rsa -in ИМЯ_КЛЮЧА.der -inform der -out ИМЯ_КЛЮЧА.pem -outform pem
+```
 ## Конвертация PEM в DER
+Сертификат:
 ```bash
 openssl x509 -inform pem -in ИМЯ_СЕРТИФИКАТА.pem -out ИМЯ_СЕРТИФИКАТА.der
+```
+Ключ:
+```bash
+openssl rsa -in ИМЯ_КЛЮЧА.pem -inform pem -out ИМЯ_КЛЮЧА.der -outform der
 ```
 
 ## Конвертация PKCS#12 / PFX (сертификат + приватный ключ) в PEM
