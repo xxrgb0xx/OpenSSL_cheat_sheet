@@ -1,18 +1,22 @@
 # OpenSSL_cheat_sheet | Шпаргалка OpenSSL
+
 ## Просмотр данных сертификата (формат PEM)
 ```bash
 openssl x509 -text -noout -in ИМЯ_СЕРТИФИКАТА
 ```
 *alias certinfo='openssl x509 -text -noout -in'*
+
 ## Скачать сертификат с сервера
 ```bash
 openssl s_client -connect АДРЕС_СЕРВЕРА:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > ИМЯ_ФАЙЛА
 ```
 *Принятно сохранять с именем .pem / .cer / .crt*
+
 ## Отладка соединения SSL/TLS (инфо о сертфикате, алгоритмах шифрования и т.д.)
 ```bash
 openssl s_client -connect ИМЯ_СЕРВЕРА:443
 ```
+
 ## Проверка соотвествия сертификата и приватного ключа
 Сертификат:
 ```bash
@@ -73,10 +77,6 @@ openssl x509 -req \
 -days 365 -in localnet.example.ru.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out localnet.example.ru_crt.pem
 ```
 
-
-
-
-
 ## Создание корневого УЦ, промежуточного УЦ и выпуск конечного сертификата
 ### Корневой УЦ
 1. Генерируем приватный ключ для сертификата ROOT_CA:
@@ -102,7 +102,8 @@ openssl req -new -key CA_key.pem -out CA.csr \
 ```
 3. Создаем и подписываем сертификат промежуточного УЦ:
 ```bash
-openssl x509 -req -days 3650 -in CA.csr -CA ROOT_CA_crt.pem -CAkey ROOT_CA_key.pem -CAcreateserial -out CA_crt.pem -extfile <(echo 'basicConstraints=critical,CA:TRUE')
+openssl x509 -req -days 3650 -in CA.csr -CA ROOT_CA_crt.pem -CAkey ROOT_CA_key.pem \
+-CAcreateserial -out CA_crt.pem -extfile <(echo 'basicConstraints=critical,CA:TRUE')
 ```
 ### Конечный сертификат
 1. Генерируем приватный ключ для конечного сертификата:
@@ -120,6 +121,7 @@ openssl req -new -key ENDPOINT_key.pem -out ENDPOINT.csr \
 openssl x509 -req -days 365 -in ENDPOINT.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out ENDPOINT_crt.pem \
 -extfile <(echo 'subjectAltName=DNS:endpoint.localnet.example.ru,DNS:www.endpoint.localnet.example.ru')
 ```
+
 ## Пакет ca-certificates
 Добавить сертификат в доверенные ЦС:
 1. Файл сертификата обязательно должен заканчиваться на .cer.
@@ -135,6 +137,7 @@ Updating certificates in /etc/ssl/certs...
 Running hooks in /etc/ca-certificates/update.d...
 done.
 ```
+
 ## Работа с ГОСТ сертификатами
 ### Выпуск сертфиката сторонним УЦ
 1.  Генерируем закрытый ключ:
@@ -178,6 +181,7 @@ openssl x509 -inform der -in ИМЯ_СЕРТИФИКАТА.der -out ИМЯ_СЕ�
 ```bash
 openssl rsa -in ИМЯ_КЛЮЧА.der -inform der -out ИМЯ_КЛЮЧА.pem -outform pem
 ```
+
 ## Конвертация PEM в DER
 Сертификат:
 ```bash
