@@ -73,6 +73,53 @@ openssl x509 -req \
 -days 365 -in localnet.example.ru.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out localnet.example.ru_crt.pem
 ```
 
+
+
+
+
+## Создание корневого УЦ, промежуточного УЦ и выпуск конечного сертификата
+### Корневой УЦ
+1. Генерируем приватный ключ для сертификата ROOT_CA:
+```bash
+openssl genrsa -out ROOT_CA_key.pem 2048
+```
+2. Генерируем сертификат ROOT_CA:
+```bash
+openssl req -nodes -x509 -sha256 -key ROOT_CA_key.pem \
+  -out ROOT_CA_crt.pem \
+  -days 3560 \
+  -subj "/C=RU/ST=SPb/L=SPb/O=CORP_NAME/OU=CORP_UNIT/CN=ROOT_CA"
+```
+### Промежуточный УЦ
+1. Генерируем приватный ключ для сертификата CA:
+```bash
+openssl genrsa -out CA_key.pem 2048
+```
+2. Генерируем запрос к корневому УЦ на выпуск сертификата промежуточного УЦ:
+```bash
+openssl req -new -key CA_key.pem -out CA.csr \
+-subj "/C=RU/ST=SPb/L=SPb/O=CORP_NAME/OU=CORP_UNIT/CN=CA"
+```
+3. Создаем и подписываем сертификат промежуточного УЦ:
+```bash
+openssl x509 -req -days 3650 -in CA.csr -CA ROOT_CA_crt.pem -CAkey ROOT_CA_key.pem -CAcreateserial -out CA_crt.pem -extfile <(echo 'basicConstraints=critical,CA:TRUE')
+```
+### Конечный сертификат
+1. Генерируем приватный ключ для конечного сертификата:
+```bash
+openssl genrsa -out ENDPOINT_key.pem 2048
+```
+2. Генерируем запрос к промежуточному УЦ на выпуск конечного сертификата:
+```bash
+openssl req -new -key ENDPOINT_key.pem -out ENDPOINT.csr \
+-subj "/C=RU/ST=Msk/L=Msk/O=MAIL_CORP/OU=TEST_ENDPOINT_INSTANCE/CN=endpoint.localnet.example.ru" \
+-addext "subjectAltName=DNS:endpoint.localnet.example.ru,DNS:www.endpoint.localnet.example.ru"
+```
+3. Создаем и подписываем конечный сертификат:
+```bash
+openssl x509 -req -days 365 -in ENDPOINT.csr -CA CA_crt.pem -CAkey CA_key.pem -CAcreateserial -out ENDPOINT_crt.pem \
+-extfile <(echo 'subjectAltName=DNS:endpoint.localnet.example.ru,DNS:www.endpoint.localnet.example.ru')
+```
 ## Пакет ca-certificates
 Добавить сертификат в доверенные ЦС:
 1. Файл сертификата обязательно должен заканчиваться на .cer.
