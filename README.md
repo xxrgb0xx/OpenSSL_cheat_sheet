@@ -109,8 +109,11 @@ openssl x509 -req -days 3650 -in CA.csr -CA ROOT_CA_crt.pem -CAkey ROOT_CA_key.p
 
 ```bash
 ...
--extfile <(printf 'basicConstraints=critical,CA:TRUE \n authorityInfoAccess=caIssuers;URI:http://pki.localnet.example.ru/ROOT_CA_crt.pem')
+-extfile <(printf 'basicConstraints=critical,CA:TRUE \n authorityInfoAccess=caIssuers;URI:http://pki.localnet.example.ru/ROOT_CA_crt.cer')
 ```
+
+> [!IMPORTANT]
+> При использовании AIA сертификат должен транслироваться в формате DER, а имя файла должно заказчиваться на .cer.
 
 ### Конечный сертификат
 1. Генерируем приватный ключ для конечного сертификата:
