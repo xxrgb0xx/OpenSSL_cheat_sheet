@@ -105,6 +105,13 @@ openssl req -new -key CA_key.pem -out CA.csr \
 openssl x509 -req -days 3650 -in CA.csr -CA ROOT_CA_crt.pem -CAkey ROOT_CA_key.pem \
 -CAcreateserial -out CA_crt.pem -extfile <(echo 'basicConstraints=critical,CA:TRUE')
 ```
+Если требуется задать AIA:
+
+```bash
+...
+-extfile <(printf 'basicConstraints=critical,CA:TRUE \n authorityInfoAccess=caIssuers;URI:http://pki.localnet.example.ru/ROOT_CA_crt.pem')
+```
+
 ### Конечный сертификат
 1. Генерируем приватный ключ для конечного сертификата:
 ```bash
